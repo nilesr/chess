@@ -13,7 +13,7 @@ typedef struct stockfish_t {
 char* uci_move(move_t move, bool is_promo);
 move_t uci_extract_move(char* move);
 
-stockfish_t stockfish_open(int elo);
+stockfish_t stockfish_open(char* path);
 
 move_t stockfish_play(stockfish_t* sf, move_t input, bool is_promo);
 

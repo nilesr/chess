@@ -8,4 +8,18 @@ It beat [sargon-2ply](https://lichess.org/rnLCRDqW0iG0) once, so that's somethin
 
 [![](rnLCRDqW0iG0.png)](https://lichess.org/rnLCRDqW0iG0)
 
+## Build
+
+`make`
+
+## Run
+
+`./chess` - the engine will play a game against itself, searching for moves with depth 5
+
+`./chess --stockfish /path/to/engine` - the engine will play a game against another UCI-compatible chess engine, such as Stockfish. It will attempt to hamper the other engine by asking it nicely to set its skill level to zero, and requesting moves with `go depth 1`.
+
+`./chess --uci` - the engine will behave as a UCI-compatible engine which can be connected to some chess frontends or `lichess-bot`. It doesn't understand every option, but it will try to determine how deep to search based on its time remaining, if the information is provided. If time remaining is not provided, it will search using the `depth` option, if it is provided. Setting `depth` to anything above 6 will likely never complete.
+
+## Performance
+
 Other engines have "Nodes/second" listed as some sort of performance metric, I'm not sure exactly what that measures, but I can count the number of outer loop iterations in `engine`, which comes out to ~6M moves/minute using all 4 cores on my laptop. This is probably way higher than whatever the actual "nodes/second" measures as other chess engines with lower values seem to perform much better.

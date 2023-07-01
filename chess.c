@@ -121,9 +121,6 @@ void print_board(const char* board) {
       printf(reset);
       printf("\n");
    }
-   if (board[8*8]) {
-      printf("En passant square: %c%c\n", "abcdefgh"[board[8*8] & 0b111], "87654321"[board[8*8] >> 3]);
-   }
 }
 bool in_bounds(int x, int y) {
    return x >= 0 && x < 8 && y >= 0 && y < 8;
@@ -710,7 +707,10 @@ int main(int argc, char** argv) {
    while (argc > 1 && strncmp(argv[1], "--uci", strlen("--uci")) == 0) {
       read_command(board, &color);
    }
-   stockfish_t sf = stockfish_open(1350);
+   stockfish_t sf = {};
+   if (argc > 2 && strncmp(argv[1], "--stockfish", strlen("--stockfish")) == 0) {
+      sf = stockfish_open(argv[2]);
+   }
 
    int fullturn = 1;
    FILE* fd = fopen("game.pgn", "w");
@@ -734,7 +734,7 @@ int main(int argc, char** argv) {
       struct timespec start, end;
       clock_gettime(CLOCK_MONOTONIC_RAW, &start);
       mats_t mats = count_mats(board);
-      if (color == WHITE) {
+      if (color == WHITE || !sf.child) {
 	 move = engine(board, &mats, color, 5);
 	 was_promo = is_promo(board, move.x1, move.y1, move.x2, move.y2);
       } else {

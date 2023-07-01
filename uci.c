@@ -36,8 +36,7 @@ move_t uci_extract_move(char* move) {
    return result;
 }
 
-stockfish_t stockfish_open(int elo) {
-   char* path = "/home/niles/Downloads/stockfish_15.1_linux_x64_bmi2/stockfish_15.1_x64_bmi2";
+stockfish_t stockfish_open(char* path) {
    char** argv = (char*[]) {path, NULL};
    stockfish_t engine = {};
    int pc[2];
@@ -58,7 +57,7 @@ stockfish_t stockfish_open(int elo) {
    engine.read_fd = cp[0];
    engine.write_fd = pc[1];
    dprintf(engine.write_fd, "setoption name UCI_LimitStrength value true\n");
-   dprintf(engine.write_fd, "setoption name UCI_Elo value %d\n", elo);
+   dprintf(engine.write_fd, "setoption name Skill Level value 0\n");
    dprintf(engine.write_fd, "uci\n");
 
    return engine;
