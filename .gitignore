@@ -1,0 +1,6 @@
+chess
+.gdb_history
+*.o
+lichess-bot
+sf_log
+game.pgn
