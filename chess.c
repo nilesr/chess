@@ -517,8 +517,8 @@ move_t engine(const char* board, mats_t* mats, int color, int n) {
 #pragma omp parallel for
    for (int node_idx = 0; node_idx < l->length; node_idx++) {
       move_t* move = l->data + node_idx;
-      char* b2 = alloca(8*8);
-      memcpy(b2, board, 8*8);
+      char* b2 = alloca(8*8+1);
+      memcpy(b2, board, 8*8+1);
       apply_move(b2, *move);
       mats_t m2 = count_mats(b2);
       move_t response = {};
@@ -530,7 +530,12 @@ move_t engine(const char* board, mats_t* mats, int color, int n) {
       int adv = side_advantage(&m2, color);
       if (n > 1 && response.x1 == 0 && response.y1 == 0 && response.x2 == 0 && response.y2 == 0) {
 	 // We have a checkmate
-	 adv = INT32_MAX;
+	 // lol nevermind we may only have a stalemate
+	 int ekx, eky;
+	 bool found = find_king(b2, &ekx, &eky, !color);
+	 if (!found || is_in_check_with_move(b2, ekx, eky, -1, -1, -1, -1 /* since response is already applied (and also it's empty) */)) {
+	    adv = INT32_MAX;
+	 }
       }
       int64_t bam_copy = atomic_load(&best_adv_move);
       int32_t current_best_adv = bam_copy >> 32;
@@ -697,6 +702,7 @@ void read_command(char* board, int* color) {
    } else {
       printf("Skipping unrecognized command: %s\n", line);
    }
+   free(line);
    fflush(stdout);
 }
 

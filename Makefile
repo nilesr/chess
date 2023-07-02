@@ -1,4 +1,4 @@
-#CFLAGS=-ggdb3 -Og -Wall -fopenmp -std=gnu11 -march=native
+#CFLAGS=-ggdb3 -Og -Wall -fopenmp -std=gnu11 -march=native -fsanitize=address
 CFLAGS=-Ofast -DNDEBUG -fopenmp -std=gnu11 -march=native -fomit-frame-pointer
 HEADERS=$(wildcard *.h)
 chess: chess.o chess_list.o uci.o
