@@ -1,3 +1,4 @@
+#include <immintrin.h>
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -19,6 +20,12 @@ static const bool debug = false;
 #else
 static const bool debug = true;
 #endif
+
+int tlrand() {
+   int r;
+   _rdrand32_step(&r);
+   return r;
+}
 
 mats_t count_mats(const char* board) {
    mats_t result = {};
@@ -541,7 +548,7 @@ move_t engine(const char* board, mats_t* mats, int color, int n) {
       int32_t current_best_adv = bam_copy >> 32;
       while (adv >= current_best_adv) {
 	 // TODO not sure about this
-	 if (current_best_adv == adv && (rand() % atomic_fetch_add_explicit(&nseen, 1, memory_order_relaxed)) != 0) {
+	 if (current_best_adv == adv && (tlrand() % atomic_fetch_add_explicit(&nseen, 1, memory_order_relaxed)) != 0) {
 	    break;
 	 }
 	 if (adv > current_best_adv) {
@@ -707,7 +714,8 @@ void read_command(char* board, int* color) {
 }
 
 int main(int argc, char** argv) {
-   srand(time(NULL));
+   uint32_t srand = time(NULL);
+   _rdseed32_step(&srand);
    int color = WHITE;
    char* board = make_board();
    while (argc > 1 && strncmp(argv[1], "--uci", strlen("--uci")) == 0) {
