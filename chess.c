@@ -491,7 +491,7 @@ void apply_move(char* board, move_t move) {
       }
    }
    // handle en pissant
-   if (move.x2 == (board[8*8] >> 3) && move.y2 == (board[8*8] & 0b111)) {
+   if (move.x2 == (board[8*8] >> 3) && move.y2 == (board[8*8] & 0b111) && (board[move.x1*8+move.y1] & 0b11111110) == P) {
       if (move.x2 == 5 && (board[move.x1*8+move.y1] & 1) == BLACK) {
 	 board[4*8+move.y2] = 0;
       }
